@@ -1,3 +1,6 @@
+import { Global } from "@emotion/react";
+import { Box, Container, CssBaseline, Typography } from "@mui/material";
+import { ThemeProvider } from "@mui/material/styles";
 import React, { useEffect, useState } from "react";
 import {
   createTask,
@@ -6,9 +9,10 @@ import {
   fetchTasks,
   updateTaskStatus,
 } from "./features/todo/api/todoService";
-import TaskForm from "./features/todo/components/TaskForm";
-import TaskList from "./features/todo/components/TaskList";
+import { TaskForm, TaskList } from "./features/todo/components";
 import { Assignee, Task } from "./features/todo/todoTypes";
+import globalStyles from "./styles/globalStyles";
+import theme from "./styles/theme";
 
 const App: React.FC = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -64,14 +68,15 @@ const App: React.FC = () => {
       const updatedTask = { ...taskToUpdate, status };
       const newTask = await updateTaskStatus(taskId, updatedTask);
       setTasks(tasks.map((task) => (task.id === taskId ? newTask : task)));
+      calculateCompletionDate([...tasks, newTask]); // recalculate with new state
     }
-    calculateCompletionDate(tasks);
   };
 
   const handleDelete = async (taskId: number) => {
     await deleteTask(taskId);
-    setTasks(tasks.filter((task) => task.id !== taskId));
-    calculateCompletionDate(tasks);
+    const updatedTasks = tasks.filter((task) => task.id !== taskId);
+    setTasks(updatedTasks);
+    calculateCompletionDate(updatedTasks);
   };
 
   const handleEdit = (task: Task) => {
@@ -79,28 +84,36 @@ const App: React.FC = () => {
   };
 
   return (
-    <div>
-      <TaskForm
-        onTaskSubmit={handleTaskSubmit}
-        assignees={assignees}
-        taskToEdit={taskToEdit}
-      />
-      <TaskList
-        tasks={tasks}
-        assignees={assignees}
-        onStatusChange={handleStatusChange}
-        onDelete={handleDelete}
-        onEdit={handleEdit}
-      />
-      <div>
-        <h2>Estimation Summary</h2>
-        {completionDate ? (
-          <p>Estimated completion date: {completionDate.toLocaleString()}</p>
-        ) : (
-          <p>No tasks available</p>
-        )}
-      </div>
-    </div>
+    <ThemeProvider theme={theme}>
+      <Global styles={globalStyles} />
+      <CssBaseline />
+      <Container>
+        <Box sx={{ marginTop: 4 }}>
+          <TaskForm
+            onTaskSubmit={handleTaskSubmit}
+            assignees={assignees}
+            taskToEdit={taskToEdit}
+          />
+          <TaskList
+            tasks={tasks}
+            assignees={assignees}
+            onStatusChange={handleStatusChange}
+            onDelete={handleDelete}
+            onEdit={handleEdit}
+          />
+          <Box sx={{ marginTop: 4 }}>
+            <Typography variant="h4">Estimation Summary</Typography>
+            {completionDate ? (
+              <Typography>
+                Estimated completion date: {completionDate.toLocaleString()}
+              </Typography>
+            ) : (
+              <Typography>No tasks available</Typography>
+            )}
+          </Box>
+        </Box>
+      </Container>
+    </ThemeProvider>
   );
 };
 

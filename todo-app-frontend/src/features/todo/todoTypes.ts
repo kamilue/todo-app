@@ -3,7 +3,7 @@ export interface Task {
   title: string;
   assigneeId?: number;
   estimate: number;
-  status: "TODO" | "DONE";
+  status: 'TODO' | 'DONE';
 }
 
 export interface Assignee {
@@ -13,7 +13,6 @@ export interface Assignee {
 
 export interface Timesheet {
   assigneeId: number;
-  date: Date;
   availableHours: TimeRange[];
 }
 

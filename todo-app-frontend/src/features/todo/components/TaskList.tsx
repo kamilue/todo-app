@@ -1,3 +1,4 @@
+import { Box, Button, Card, CardContent, Typography } from "@mui/material";
 import React from "react";
 import { Assignee, Task } from "../todoTypes";
 
@@ -25,48 +26,53 @@ const TaskList: React.FC<TaskListProps> = ({
     return tasks
       .filter((task) => task.status === status)
       .map((task) => (
-        <div key={task.id}>
-          <h3>{task.title}</h3>
-          <p>Status: {task.status}</p>
-          <p>Estimate: {task.estimate} hours</p>
-          <p>Assignee: {getAssigneeName(task.assigneeId)}</p>
-          <button
-            onClick={() => {
-              if (task.id !== undefined) {
-                onStatusChange(
-                  task.id,
-                  task.status === "TODO" ? "DONE" : "TODO"
-                );
-              }
-            }}
-          >
-            {task.status === "TODO" ? "Mark as Done" : "Mark as TODO"}
-          </button>
-          <button onClick={() => onEdit(task)}>Edit</button>
-          <button
-            onClick={() => {
-              if (task.id !== undefined) {
-                onDelete(task.id);
-              }
-            }}
-          >
-            Delete
-          </button>
-        </div>
+        <Card key={task.id} sx={{ marginBottom: 2 }}>
+          <CardContent>
+            <Typography variant="h5">{task.title}</Typography>
+            <Typography>Status: {task.status}</Typography>
+            <Typography>Estimate: {task.estimate} hours</Typography>
+            <Typography>
+              Assignee: {getAssigneeName(task.assigneeId)}
+            </Typography>
+            <Box sx={{ display: "flex", gap: 1, marginTop: 2 }}>
+              <Button
+                variant="contained"
+                onClick={() =>
+                  onStatusChange(
+                    task.id!,
+                    task.status === "TODO" ? "DONE" : "TODO"
+                  )
+                }
+              >
+                {task.status === "TODO" ? "Mark as Done" : "Mark as TODO"}
+              </Button>
+              <Button variant="contained" onClick={() => onEdit(task)}>
+                Edit
+              </Button>
+              <Button
+                variant="contained"
+                color="secondary"
+                onClick={() => onDelete(task.id!)}
+              >
+                Delete
+              </Button>
+            </Box>
+          </CardContent>
+        </Card>
       ));
   };
 
   return (
-    <div>
-      <h2>
+    <Box>
+      <Typography variant="h4">
         TODO Tasks ({tasks.filter((task) => task.status === "TODO").length})
-      </h2>
+      </Typography>
       {tasksByStatus("TODO")}
-      <h2>
+      <Typography variant="h4">
         DONE Tasks ({tasks.filter((task) => task.status === "DONE").length})
-      </h2>
+      </Typography>
       {tasksByStatus("DONE")}
-    </div>
+    </Box>
   );
 };
 

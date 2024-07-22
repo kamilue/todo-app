@@ -1,3 +1,12 @@
+import {
+  Box,
+  Button,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  TextField,
+} from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { Assignee, Task } from "../todoTypes";
 
@@ -43,39 +52,56 @@ const TaskForm: React.FC<TaskFormProps> = ({
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <input
-        type="text"
-        placeholder="Task Title"
+    <Box component="form" onSubmit={handleSubmit} sx={{ mt: 3 }}>
+      <TextField
+        label="Task Title"
         value={title}
         onChange={(e) => setTitle(e.target.value)}
+        fullWidth
+        margin="normal"
       />
-      <select
-        value={assigneeId}
-        onChange={(e) => setAssigneeId(e.target.value)}
-      >
-        <option value="">Select Assignee</option>
-        {assignees.map((assignee) => (
-          <option key={assignee.id} value={assignee.id}>
-            {assignee.name}
-          </option>
-        ))}
-      </select>
-      <input
+      <FormControl fullWidth margin="normal">
+        <InputLabel id="assignee-label">Select Assignee</InputLabel>
+        <Select
+          labelId="assignee-label"
+          value={assigneeId}
+          onChange={(e) => setAssigneeId(e.target.value)}
+          label="Select Assignee"
+        >
+          <MenuItem value="">
+            <em>None</em>
+          </MenuItem>
+          {assignees.map((assignee) => (
+            <MenuItem key={assignee.id} value={assignee.id}>
+              {assignee.name}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
+      <TextField
+        label="Estimate (hours)"
         type="number"
-        placeholder="Estimate (hours)"
         value={estimate}
         onChange={(e) => setEstimate(e.target.value)}
+        fullWidth
+        margin="normal"
       />
-      <select
-        value={status}
-        onChange={(e) => setStatus(e.target.value as "TODO" | "DONE")}
-      >
-        <option value="TODO">TODO</option>
-        <option value="DONE">DONE</option>
-      </select>
-      <button type="submit">{taskToEdit ? "Edit Task" : "Add Task"}</button>
-    </form>
+      <FormControl fullWidth margin="normal">
+        <InputLabel id="status-label">Status</InputLabel>
+        <Select
+          labelId="status-label"
+          value={status}
+          onChange={(e) => setStatus(e.target.value as "TODO" | "DONE")}
+          label="Status"
+        >
+          <MenuItem value="TODO">TODO</MenuItem>
+          <MenuItem value="DONE">DONE</MenuItem>
+        </Select>
+      </FormControl>
+      <Button type="submit" variant="contained" color="primary">
+        {taskToEdit ? "Edit Task" : "Add Task"}
+      </Button>
+    </Box>
   );
 };
 
