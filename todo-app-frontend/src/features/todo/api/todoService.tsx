@@ -13,7 +13,7 @@ export const createTask = async (task: Partial<Task>): Promise<Task> => {
   return response.data;
 };
 
-export const updateTaskStatus = async (
+export const updateTask = async (
   taskId: number,
   updatedTask: Partial<Task>
 ): Promise<Task> => {

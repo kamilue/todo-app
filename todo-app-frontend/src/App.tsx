@@ -7,7 +7,7 @@ import {
   deleteTask,
   fetchAssignees,
   fetchTasks,
-  updateTaskStatus,
+  updateTask,
 } from "./features/todo/api/todoService";
 import { TaskForm, TaskList } from "./features/todo/components";
 import { Assignee, Task } from "./features/todo/todoTypes";
@@ -51,7 +51,7 @@ const App: React.FC = () => {
   const handleTaskSubmit = async (task: Partial<Task>) => {
     if (taskToEdit) {
       const updatedTask = { ...taskToEdit, ...task };
-      await updateTaskStatus(taskToEdit.id!, updatedTask);
+      await updateTask(taskToEdit.id!, updatedTask);
     } else {
       await createTask(task);
     }
@@ -68,7 +68,7 @@ const App: React.FC = () => {
     const taskToUpdate = tasks.find((task) => task.id === taskId);
     if (taskToUpdate) {
       const updatedTask = { ...taskToUpdate, status };
-      await updateTaskStatus(taskId, updatedTask);
+      await updateTask(taskId, updatedTask);
     }
     const updatedTasks = await fetchTasks();
     setTasks(updatedTasks);

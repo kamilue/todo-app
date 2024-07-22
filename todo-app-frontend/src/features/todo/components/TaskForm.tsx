@@ -1,7 +1,9 @@
+import CloseIcon from "@mui/icons-material/Close";
 import {
   Box,
   Button,
   FormControl,
+  IconButton,
   InputLabel,
   MenuItem,
   Select,
@@ -134,6 +136,11 @@ const TaskForm: React.FC<TaskFormProps> = ({
         <Button type="submit" variant="contained" color="primary">
           {taskToEdit ? "Edit Task" : "Add Task"}
         </Button>
+        {taskToEdit && (
+          <IconButton onClick={onCancelEdit}>
+            <CloseIcon />
+          </IconButton>
+        )}
       </Box>
     </Box>
   );
