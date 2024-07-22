@@ -46,20 +46,17 @@ namespace TodoAppBackend.Controllers
             return Ok(task);
         }
 
-        [HttpGet("estimate")]
-        public async Task<ActionResult<DateTime>> GetEstimatedCompletionDate([FromQuery] string apiKey)
+        [HttpDelete("{id}")]
+        public ActionResult DeleteTask(int id)
         {
-            var assigneeIds = tasks.Select(t => t.AssigneeId).Distinct().ToList();
-            var timesheets = new List<Timesheet>();
-
-            foreach (var assigneeId in assigneeIds)
+            var task = tasks.FirstOrDefault(t => t.Id == id);
+            if (task == null)
             {
-                var timesheet = await _timesheetService.GetTimesheetAsync(assigneeId, DateTime.Now, apiKey);
-                timesheets.AddRange(timesheet);
+                return NotFound();
             }
 
-            var estimatedCompletionDate = _taskCompletionEstimator.EstimateCompletionDate(tasks, timesheets);
-            return Ok(estimatedCompletionDate);
+            tasks.Remove(task);
+            return NoContent();
         }
     }
 }
