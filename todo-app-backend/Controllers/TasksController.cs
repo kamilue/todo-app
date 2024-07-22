@@ -34,7 +34,7 @@ namespace TodoAppBackend.Controllers
         }
 
         [HttpPatch("{id}")]
-        public ActionResult<Task> UpdateTaskStatus(int id, [FromBody] Task updatedTask)
+        public ActionResult<Task> UpdateTask(int id, [FromBody] Task updatedTask)
         {
             var task = tasks.FirstOrDefault(t => t.Id == id);
             if (task == null)
@@ -42,7 +42,11 @@ namespace TodoAppBackend.Controllers
                 return NotFound();
             }
 
+            task.Title = updatedTask.Title;
+            task.AssigneeId = updatedTask.AssigneeId;
+            task.Estimate = updatedTask.Estimate;
             task.Status = updatedTask.Status;
+
             return Ok(task);
         }
 
