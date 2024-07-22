@@ -1,21 +1,22 @@
 import React, { useState } from "react";
-import { Task } from "../todoTypes";
+import { Assignee, Task } from "../todoTypes";
 
 interface TaskFormProps {
-  onTaskSubmit: (task: Task) => void;
+  onTaskSubmit: (task: Partial<Task>) => void;
+  assignees: Assignee[];
 }
 
-const TaskForm: React.FC<TaskFormProps> = ({ onTaskSubmit }) => {
+const TaskForm: React.FC<TaskFormProps> = ({ onTaskSubmit, assignees }) => {
   const [title, setTitle] = useState("");
-  const [assigneeId, setAssigneeId] = useState<number | string>("");
-  const [estimate, setEstimate] = useState<number | string>("");
+  const [assigneeId, setAssigneeId] = useState<string>("");
+  const [estimate, setEstimate] = useState("");
   const [status, setStatus] = useState<"TODO" | "DONE">("TODO");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onTaskSubmit({
       title,
-      assigneeId: Number(assigneeId),
+      assigneeId: assigneeId ? parseInt(assigneeId) : undefined,
       estimate: Number(estimate),
       status,
     });
@@ -33,12 +34,17 @@ const TaskForm: React.FC<TaskFormProps> = ({ onTaskSubmit }) => {
         value={title}
         onChange={(e) => setTitle(e.target.value)}
       />
-      <input
-        type="text"
-        placeholder="Assignee ID"
+      <select
         value={assigneeId}
         onChange={(e) => setAssigneeId(e.target.value)}
-      />
+      >
+        <option value="">Select Assignee</option>
+        {assignees.map((assignee) => (
+          <option key={assignee.id} value={assignee.id}>
+            {assignee.name}
+          </option>
+        ))}
+      </select>
       <input
         type="number"
         placeholder="Estimate (hours)"

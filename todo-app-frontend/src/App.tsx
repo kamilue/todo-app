@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import {
   createTask,
+  deleteTask,
   fetchAssignees,
   fetchTasks,
   updateTaskStatus,
@@ -27,20 +28,37 @@ const App: React.FC = () => {
     loadAssignees();
   }, [apiKey]);
 
-  const handleTaskSubmit = async (task: Task) => {
+  const handleTaskSubmit = async (task: Partial<Task>) => {
     const newTask = await createTask(task);
     setTasks([...tasks, newTask]);
   };
 
-  const handleStatusChange = async (task: Task) => {
-    const updatedTask = await updateTaskStatus(task);
-    setTasks(tasks.map((t) => (t.id === task.id ? updatedTask : t)));
+  const handleStatusChange = async (
+    taskId: number,
+    status: "TODO" | "DONE"
+  ) => {
+    const taskToUpdate = tasks.find((task) => task.id === taskId);
+    if (taskToUpdate) {
+      const updatedTask = { ...taskToUpdate, status };
+      const newTask = await updateTaskStatus(taskId, updatedTask);
+      setTasks(tasks.map((task) => (task.id === taskId ? newTask : task)));
+    }
+  };
+
+  const handleDelete = async (taskId: number) => {
+    await deleteTask(taskId);
+    setTasks(tasks.filter((task) => task.id !== taskId));
   };
 
   return (
     <div>
-      <TaskForm onTaskSubmit={handleTaskSubmit} />
-      <TaskList tasks={tasks} onStatusChange={handleStatusChange} />
+      <TaskForm onTaskSubmit={handleTaskSubmit} assignees={assignees} />
+      <TaskList
+        tasks={tasks}
+        assignees={assignees}
+        onStatusChange={handleStatusChange}
+        onDelete={handleDelete}
+      />
     </div>
   );
 };

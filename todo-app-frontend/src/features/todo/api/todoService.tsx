@@ -1,24 +1,31 @@
 import axios from "axios";
-import { Task } from "../todoTypes";
+import { Assignee, Task } from "../todoTypes";
 
 const API_URL = "http://localhost:5000/api";
 
-export const fetchTasks = async () => {
-  const response = await axios.get<Task[]>(`${API_URL}/tasks`);
+export const fetchTasks = async (): Promise<Task[]> => {
+  const response = await axios.get(`${API_URL}/tasks`);
   return response.data;
 };
 
-export const createTask = async (task: Task) => {
-  const response = await axios.post<Task>(`${API_URL}/tasks`, task);
+export const createTask = async (task: Partial<Task>): Promise<Task> => {
+  const response = await axios.post(`${API_URL}/tasks`, task);
   return response.data;
 };
 
-export const updateTaskStatus = async (task: Task) => {
-  const response = await axios.patch<Task>(`${API_URL}/tasks/${task.id}`, task);
+export const updateTaskStatus = async (
+  taskId: number,
+  updatedTask: Partial<Task>
+): Promise<Task> => {
+  const response = await axios.patch(`${API_URL}/tasks/${taskId}`, updatedTask);
   return response.data;
 };
 
-export const fetchAssignees = async (apiKey: string) => {
+export const deleteTask = async (taskId: number): Promise<void> => {
+  await axios.delete(`${API_URL}/tasks/${taskId}`);
+};
+
+export const fetchAssignees = async (apiKey: string): Promise<Assignee[]> => {
   const response = await axios.get(`${API_URL}/assignees`, {
     params: { apiKey },
   });
