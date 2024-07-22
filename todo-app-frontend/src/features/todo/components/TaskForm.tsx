@@ -1,16 +1,32 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Assignee, Task } from "../todoTypes";
 
 interface TaskFormProps {
   onTaskSubmit: (task: Partial<Task>) => void;
   assignees: Assignee[];
+  taskToEdit: Task | null;
 }
 
-const TaskForm: React.FC<TaskFormProps> = ({ onTaskSubmit, assignees }) => {
+const TaskForm: React.FC<TaskFormProps> = ({
+  onTaskSubmit,
+  assignees,
+  taskToEdit,
+}) => {
   const [title, setTitle] = useState("");
   const [assigneeId, setAssigneeId] = useState<string>("");
   const [estimate, setEstimate] = useState("");
   const [status, setStatus] = useState<"TODO" | "DONE">("TODO");
+
+  useEffect(() => {
+    if (taskToEdit) {
+      setTitle(taskToEdit.title);
+      setAssigneeId(
+        taskToEdit.assigneeId ? taskToEdit.assigneeId.toString() : ""
+      );
+      setEstimate(taskToEdit.estimate.toString());
+      setStatus(taskToEdit.status);
+    }
+  }, [taskToEdit]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -58,7 +74,7 @@ const TaskForm: React.FC<TaskFormProps> = ({ onTaskSubmit, assignees }) => {
         <option value="TODO">TODO</option>
         <option value="DONE">DONE</option>
       </select>
-      <button type="submit">Add Task</button>
+      <button type="submit">{taskToEdit ? "Edit Task" : "Add Task"}</button>
     </form>
   );
 };
