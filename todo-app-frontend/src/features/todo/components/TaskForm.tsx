@@ -7,65 +7,87 @@ import {
   Select,
   TextField,
 } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import { useFormik } from "formik";
+import React, { useEffect } from "react";
+import * as yup from "yup";
 import { Assignee, Task } from "../todoTypes";
 
 interface TaskFormProps {
   onTaskSubmit: (task: Partial<Task>) => void;
   assignees: Assignee[];
   taskToEdit: Task | null;
+  onCancelEdit: () => void;
 }
+
+const validationSchema = yup.object({
+  title: yup.string().required("Title is required"),
+  estimate: yup.number().required("Estimate is required").min(0),
+  status: yup.string().required("Status is required"),
+});
 
 const TaskForm: React.FC<TaskFormProps> = ({
   onTaskSubmit,
   assignees,
   taskToEdit,
+  onCancelEdit,
 }) => {
-  const [title, setTitle] = useState("");
-  const [assigneeId, setAssigneeId] = useState<string>("");
-  const [estimate, setEstimate] = useState("");
-  const [status, setStatus] = useState<"TODO" | "DONE">("TODO");
+  const formik = useFormik({
+    initialValues: {
+      title: "",
+      assigneeId: "",
+      estimate: "",
+      status: "TODO",
+    },
+    validationSchema: validationSchema,
+    onSubmit: (values) => {
+      onTaskSubmit({
+        title: values.title,
+        assigneeId: values.assigneeId ? parseInt(values.assigneeId) : undefined,
+        estimate: Number(values.estimate),
+        status: values.status as "TODO" | "DONE",
+      });
+      formik.resetForm();
+    },
+  });
 
   useEffect(() => {
     if (taskToEdit) {
-      setTitle(taskToEdit.title);
-      setAssigneeId(
-        taskToEdit.assigneeId ? taskToEdit.assigneeId.toString() : ""
-      );
-      setEstimate(taskToEdit.estimate.toString());
-      setStatus(taskToEdit.status);
+      formik.setValues({
+        title: taskToEdit.title,
+        assigneeId: taskToEdit.assigneeId?.toString() || "",
+        estimate: taskToEdit.estimate.toString(),
+        status: taskToEdit.status,
+      });
+    } else {
+      formik.resetForm();
     }
   }, [taskToEdit]);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onTaskSubmit({
-      title,
-      assigneeId: assigneeId ? parseInt(assigneeId) : undefined,
-      estimate: Number(estimate),
-      status,
-    });
-    setTitle("");
-    setAssigneeId("");
-    setEstimate("");
-    setStatus("TODO");
-  };
-
   return (
-    <Box component="form" onSubmit={handleSubmit} sx={{ mt: 3 }}>
+    <Box component="form" onSubmit={formik.handleSubmit} sx={{ mt: 3 }}>
       <TextField
         label="Task Title"
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
+        name="title"
+        value={formik.values.title}
+        onChange={formik.handleChange}
+        onBlur={formik.handleBlur}
+        error={formik.touched.title && Boolean(formik.errors.title)}
+        helperText={formik.touched.title && formik.errors.title}
         fullWidth
         margin="normal"
       />
-      <FormControl fullWidth margin="normal">
+      <FormControl
+        fullWidth
+        margin="normal"
+        error={formik.touched.assigneeId && Boolean(formik.errors.assigneeId)}
+      >
         <InputLabel id="assignee-label">Select Assignee</InputLabel>
         <Select
           labelId="assignee-label"
-          value={assigneeId}
-          onChange={(e) => setAssigneeId(e.target.value)}
+          name="assigneeId"
+          value={formik.values.assigneeId}
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
           label="Select Assignee"
         >
           <MenuItem value="">
@@ -81,26 +103,38 @@ const TaskForm: React.FC<TaskFormProps> = ({
       <TextField
         label="Estimate (hours)"
         type="number"
-        value={estimate}
-        onChange={(e) => setEstimate(e.target.value)}
+        name="estimate"
+        value={formik.values.estimate}
+        onChange={formik.handleChange}
+        onBlur={formik.handleBlur}
+        error={formik.touched.estimate && Boolean(formik.errors.estimate)}
+        helperText={formik.touched.estimate && formik.errors.estimate}
         fullWidth
         margin="normal"
       />
-      <FormControl fullWidth margin="normal">
+      <FormControl
+        fullWidth
+        margin="normal"
+        error={formik.touched.status && Boolean(formik.errors.status)}
+      >
         <InputLabel id="status-label">Status</InputLabel>
         <Select
           labelId="status-label"
-          value={status}
-          onChange={(e) => setStatus(e.target.value as "TODO" | "DONE")}
+          name="status"
+          value={formik.values.status}
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
           label="Status"
         >
           <MenuItem value="TODO">TODO</MenuItem>
           <MenuItem value="DONE">DONE</MenuItem>
         </Select>
       </FormControl>
-      <Button type="submit" variant="contained" color="primary">
-        {taskToEdit ? "Edit Task" : "Add Task"}
-      </Button>
+      <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+        <Button type="submit" variant="contained" color="primary">
+          {taskToEdit ? "Edit Task" : "Add Task"}
+        </Button>
+      </Box>
     </Box>
   );
 };

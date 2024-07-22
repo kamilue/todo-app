@@ -38,7 +38,9 @@ const App: React.FC = () => {
   const calculateCompletionDate = (tasks: Task[]) => {
     let totalHours = 0;
     tasks.forEach((task) => {
-      totalHours += task.estimate;
+      if (task.status === "TODO") {
+        totalHours += task.estimate;
+      }
     });
 
     const now = new Date();
@@ -49,14 +51,14 @@ const App: React.FC = () => {
   const handleTaskSubmit = async (task: Partial<Task>) => {
     if (taskToEdit) {
       const updatedTask = { ...taskToEdit, ...task };
-      const newTask = await updateTaskStatus(taskToEdit.id!, updatedTask);
-      setTasks(tasks.map((t) => (t.id === newTask.id ? newTask : t)));
-      setTaskToEdit(null);
+      await updateTaskStatus(taskToEdit.id!, updatedTask);
     } else {
-      const newTask = await createTask(task);
-      setTasks([...tasks, newTask]);
+      await createTask(task);
     }
-    calculateCompletionDate(tasks);
+    const updatedTasks = await fetchTasks();
+    setTasks(updatedTasks);
+    calculateCompletionDate(updatedTasks);
+    setTaskToEdit(null);
   };
 
   const handleStatusChange = async (
@@ -66,21 +68,26 @@ const App: React.FC = () => {
     const taskToUpdate = tasks.find((task) => task.id === taskId);
     if (taskToUpdate) {
       const updatedTask = { ...taskToUpdate, status };
-      const newTask = await updateTaskStatus(taskId, updatedTask);
-      setTasks(tasks.map((task) => (task.id === taskId ? newTask : task)));
-      calculateCompletionDate([...tasks, newTask]); // recalculate with new state
+      await updateTaskStatus(taskId, updatedTask);
     }
+    const updatedTasks = await fetchTasks();
+    setTasks(updatedTasks);
+    calculateCompletionDate(updatedTasks);
   };
 
   const handleDelete = async (taskId: number) => {
     await deleteTask(taskId);
-    const updatedTasks = tasks.filter((task) => task.id !== taskId);
+    const updatedTasks = await fetchTasks();
     setTasks(updatedTasks);
     calculateCompletionDate(updatedTasks);
   };
 
   const handleEdit = (task: Task) => {
     setTaskToEdit(task);
+  };
+
+  const handleCancelEdit = () => {
+    setTaskToEdit(null);
   };
 
   return (
@@ -93,6 +100,7 @@ const App: React.FC = () => {
             onTaskSubmit={handleTaskSubmit}
             assignees={assignees}
             taskToEdit={taskToEdit}
+            onCancelEdit={handleCancelEdit}
           />
           <TaskList
             tasks={tasks}
@@ -100,17 +108,20 @@ const App: React.FC = () => {
             onStatusChange={handleStatusChange}
             onDelete={handleDelete}
             onEdit={handleEdit}
+            isEditing={!!taskToEdit}
           />
-          <Box sx={{ marginTop: 4 }}>
-            <Typography variant="h4">Estimation Summary</Typography>
-            {completionDate ? (
-              <Typography>
-                Estimated completion date: {completionDate.toLocaleString()}
-              </Typography>
-            ) : (
-              <Typography>No tasks available</Typography>
-            )}
-          </Box>
+          {tasks.some((task) => task.status === "TODO") && (
+            <Box sx={{ marginTop: 4 }}>
+              <Typography variant="h4">Estimation Summary</Typography>
+              {completionDate ? (
+                <Typography>
+                  Estimated completion date: {completionDate.toLocaleString()}
+                </Typography>
+              ) : (
+                <Typography>No tasks available</Typography>
+              )}
+            </Box>
+          )}
         </Box>
       </Container>
     </ThemeProvider>

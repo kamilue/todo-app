@@ -8,6 +8,7 @@ interface TaskListProps {
   onStatusChange: (taskId: number, status: "TODO" | "DONE") => void;
   onDelete: (taskId: number) => void;
   onEdit: (task: Task) => void;
+  isEditing: boolean;
 }
 
 const TaskList: React.FC<TaskListProps> = ({
@@ -16,6 +17,7 @@ const TaskList: React.FC<TaskListProps> = ({
   onStatusChange,
   onDelete,
   onEdit,
+  isEditing,
 }) => {
   const getAssigneeName = (assigneeId: number | undefined) => {
     const assignee = assignees.find((a) => parseInt(a.id) === assigneeId);
@@ -43,16 +45,22 @@ const TaskList: React.FC<TaskListProps> = ({
                     task.status === "TODO" ? "DONE" : "TODO"
                   )
                 }
+                disabled={isEditing}
               >
                 {task.status === "TODO" ? "Mark as Done" : "Mark as TODO"}
               </Button>
-              <Button variant="contained" onClick={() => onEdit(task)}>
+              <Button
+                variant="contained"
+                onClick={() => onEdit(task)}
+                disabled={isEditing}
+              >
                 Edit
               </Button>
               <Button
                 variant="contained"
                 color="secondary"
                 onClick={() => onDelete(task.id!)}
+                disabled={isEditing}
               >
                 Delete
               </Button>
