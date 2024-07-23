@@ -1,4 +1,15 @@
-import { Box, Button, Card, CardContent, Typography } from "@mui/material";
+import CheckBoxIcon from "@mui/icons-material/CheckBox";
+import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
+import {
+  Box,
+  Card,
+  CardContent,
+  Grid,
+  IconButton,
+  Typography,
+} from "@mui/material";
 import React from "react";
 import { Assignee, Task } from "../todoTypes";
 
@@ -28,7 +39,7 @@ const TaskList: React.FC<TaskListProps> = ({
     return tasks
       .filter((task) => task.status === status)
       .map((task) => (
-        <Card key={task.id} sx={{ marginBottom: 2 }}>
+        <Card key={task.id} sx={{ marginBottom: 2, position: "relative" }}>
           <CardContent>
             <Typography variant="h5">{task.title}</Typography>
             <Typography>Status: {task.status}</Typography>
@@ -36,9 +47,9 @@ const TaskList: React.FC<TaskListProps> = ({
             <Typography>
               Assignee: {getAssigneeName(task.assigneeId)}
             </Typography>
-            <Box sx={{ display: "flex", gap: 1, marginTop: 2 }}>
-              <Button
-                variant="contained"
+            <Box sx={{ position: "absolute", top: 8, right: 8 }}>
+              <IconButton
+                color="primary"
                 onClick={() =>
                   onStatusChange(
                     task.id!,
@@ -47,23 +58,26 @@ const TaskList: React.FC<TaskListProps> = ({
                 }
                 disabled={isEditing}
               >
-                {task.status === "TODO" ? "Mark as Done" : "Mark as TODO"}
-              </Button>
-              <Button
-                variant="contained"
+                {task.status === "TODO" ? (
+                  <CheckBoxOutlineBlankIcon />
+                ) : (
+                  <CheckBoxIcon />
+                )}
+              </IconButton>
+              <IconButton
+                color="primary"
                 onClick={() => onEdit(task)}
                 disabled={isEditing}
               >
-                Edit
-              </Button>
-              <Button
-                variant="contained"
+                <EditIcon />
+              </IconButton>
+              <IconButton
                 color="secondary"
                 onClick={() => onDelete(task.id!)}
                 disabled={isEditing}
               >
-                Delete
-              </Button>
+                <DeleteIcon />
+              </IconButton>
             </Box>
           </CardContent>
         </Card>
@@ -71,16 +85,14 @@ const TaskList: React.FC<TaskListProps> = ({
   };
 
   return (
-    <Box>
-      <Typography variant="h4">
-        TODO Tasks ({tasks.filter((task) => task.status === "TODO").length})
-      </Typography>
-      {tasksByStatus("TODO")}
-      <Typography variant="h4">
-        DONE Tasks ({tasks.filter((task) => task.status === "DONE").length})
-      </Typography>
-      {tasksByStatus("DONE")}
-    </Box>
+    <Grid container spacing={2}>
+      <Grid item xs={6} className="tasks-list">
+        {tasksByStatus("TODO")}
+      </Grid>
+      <Grid item xs={6} className="tasks-list">
+        {tasksByStatus("DONE")}
+      </Grid>
+    </Grid>
   );
 };
 

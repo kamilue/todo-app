@@ -1,5 +1,12 @@
 import { Global } from "@emotion/react";
-import { Box, Container, CssBaseline, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Collapse,
+  Container,
+  CssBaseline,
+  Typography,
+} from "@mui/material";
 import { ThemeProvider } from "@mui/material/styles";
 import React, { useEffect, useState } from "react";
 import {
@@ -20,6 +27,7 @@ const App: React.FC = () => {
   const [apiKey, setApiKey] = useState("your-api-key");
   const [taskToEdit, setTaskToEdit] = useState<Task | null>(null);
   const [completionDate, setCompletionDate] = useState<Date | null>(null);
+  const [formOpen, setFormOpen] = useState<boolean>(false);
 
   useEffect(() => {
     const loadTasks = async () => {
@@ -59,6 +67,7 @@ const App: React.FC = () => {
     setTasks(updatedTasks);
     calculateCompletionDate(updatedTasks);
     setTaskToEdit(null);
+    setFormOpen(false);
   };
 
   const handleStatusChange = async (
@@ -84,44 +93,71 @@ const App: React.FC = () => {
 
   const handleEdit = (task: Task) => {
     setTaskToEdit(task);
+    setFormOpen(true);
   };
 
   const handleCancelEdit = () => {
     setTaskToEdit(null);
+    setFormOpen(false);
   };
 
   return (
     <ThemeProvider theme={theme}>
       <Global styles={globalStyles} />
       <CssBaseline />
-      <Container>
-        <Box sx={{ marginTop: 4 }}>
+      <Container className="app-container">
+        {tasks.some((task) => task.status === "TODO") ? (
+          <Box sx={{ marginTop: 4, textAlign: "center" }}>
+            <Typography variant="h4">Estimation Summary</Typography>
+            {completionDate ? (
+              <Typography>
+                Estimated completion date: {completionDate.toLocaleString()}
+              </Typography>
+            ) : (
+              <Typography>No tasks available</Typography>
+            )}
+            {!formOpen && (
+              <Button
+                variant="contained"
+                sx={{ marginTop: 2 }}
+                onClick={() => setFormOpen(true)}
+              >
+                Open Add Task Form
+              </Button>
+            )}
+          </Box>
+        ) : (
+          !formOpen && (
+            <Box sx={{ marginTop: 4, textAlign: "center" }}>
+              <Button
+                variant="contained"
+                sx={{ marginTop: 2 }}
+                onClick={() => setFormOpen(true)}
+              >
+                Open Add Task Form
+              </Button>
+            </Box>
+          )
+        )}
+        <Collapse in={formOpen}>
           <TaskForm
             onTaskSubmit={handleTaskSubmit}
             assignees={assignees}
             taskToEdit={taskToEdit}
             onCancelEdit={handleCancelEdit}
           />
-          <TaskList
-            tasks={tasks}
-            assignees={assignees}
-            onStatusChange={handleStatusChange}
-            onDelete={handleDelete}
-            onEdit={handleEdit}
-            isEditing={!!taskToEdit}
-          />
-          {tasks.some((task) => task.status === "TODO") && (
-            <Box sx={{ marginTop: 4 }}>
-              <Typography variant="h4">Estimation Summary</Typography>
-              {completionDate ? (
-                <Typography>
-                  Estimated completion date: {completionDate.toLocaleString()}
-                </Typography>
-              ) : (
-                <Typography>No tasks available</Typography>
-              )}
-            </Box>
-          )}
+        </Collapse>
+        <Box className="main-content" sx={{ marginTop: 4 }}>
+          <Box className="tasks-container">
+            <TaskList
+              tasks={tasks}
+              assignees={assignees}
+              onStatusChange={handleStatusChange}
+              onDelete={handleDelete}
+              onEdit={handleEdit}
+              isEditing={!!taskToEdit}
+            />
+          </Box>
         </Box>
       </Container>
     </ThemeProvider>
