@@ -9,6 +9,8 @@ import {
 } from "@mui/material";
 import { ThemeProvider } from "@mui/material/styles";
 import React, { useEffect, useState } from "react";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import {
   createTask,
   deleteTask,
@@ -57,17 +59,23 @@ const App: React.FC = () => {
   };
 
   const handleTaskSubmit = async (task: Partial<Task>) => {
-    if (taskToEdit) {
-      const updatedTask = { ...taskToEdit, ...task };
-      await updateTask(taskToEdit.id!, updatedTask);
-    } else {
-      await createTask(task);
+    try {
+      if (taskToEdit) {
+        const updatedTask = { ...taskToEdit, ...task };
+        await updateTask(taskToEdit.id!, updatedTask);
+      } else {
+        await createTask(task);
+      }
+      const updatedTasks = await fetchTasks();
+      setTasks(updatedTasks);
+      calculateCompletionDate(updatedTasks);
+      setTaskToEdit(null);
+      setFormOpen(false);
+    } catch (error: any) {
+      toast.error(
+        `Error: ${error.response.data.message} Assignee has only ${error.response.data.availableHours} available hours`
+      );
     }
-    const updatedTasks = await fetchTasks();
-    setTasks(updatedTasks);
-    calculateCompletionDate(updatedTasks);
-    setTaskToEdit(null);
-    setFormOpen(false);
   };
 
   const handleStatusChange = async (
@@ -105,6 +113,17 @@ const App: React.FC = () => {
     <ThemeProvider theme={theme}>
       <Global styles={globalStyles} />
       <CssBaseline />
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
       <Container className="app-container">
         {tasks.some((task) => task.status === "TODO") ? (
           <Box sx={{ marginTop: 4, textAlign: "center" }}>

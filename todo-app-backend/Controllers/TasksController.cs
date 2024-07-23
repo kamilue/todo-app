@@ -49,7 +49,7 @@ namespace TodoAppBackend.Controllers
                 var assignedHours = tasks.Where(t => t.AssigneeId == task.AssigneeId && t.Status == "TODO").Sum(t => t.Estimate);
                 if (assignedHours + task.Estimate > availableHours)
                 {
-                    return BadRequest(new { Message = "Assignee does not have enough available hours for this task." });
+                    return BadRequest(new { Message = "Assignee does not have enough available hours for this task.", availableHours });
                 }
 
                 task.Id = tasks.Count > 0 ? tasks.Max(t => t.Id) + 1 : 1;
@@ -89,7 +89,7 @@ namespace TodoAppBackend.Controllers
                 var assignedHours = tasks.Where(t => t.AssigneeId == updatedTask.AssigneeId && t.Status == "TODO").Sum(t => t.Estimate);
                 if (assignedHours + updatedTask.Estimate > availableHours)
                 {
-                    return BadRequest(new { Message = "Assignee does not have enough available hours for this task." });
+                    return BadRequest(new { Message = "Assignee does not have enough available hours for this task.", availableHours });
                 }
 
                 task.Title = updatedTask.Title;
