@@ -138,7 +138,14 @@ const TaskForm: React.FC<TaskFormProps> = ({
           <Button type="submit" variant="contained" color="primary">
             {taskToEdit ? "Edit Task" : "Add Task"}
           </Button>
-          <IconButton onClick={onCancelEdit}>
+          <IconButton
+            size="small"
+            sx={{
+              background: "linear-gradient(45deg, #8e2de2 30%, #4a00e0 90%)",
+              color: "#fff",
+            }}
+            onClick={onCancelEdit}
+          >
             <CloseIcon />
           </IconButton>
         </Box>

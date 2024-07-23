@@ -21,20 +21,18 @@ const globalStyles = css`
   .app-container {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
     height: 100vh;
   }
 
   .main-content {
     display: flex;
-    width: 100%;
+    flex: 1;
     overflow: hidden;
   }
 
   .tasks-container {
     display: flex;
-    width: 100%;
+    flex: 1;
     overflow: hidden;
   }
 
@@ -42,6 +40,24 @@ const globalStyles = css`
     flex: 1;
     overflow-y: auto;
     padding: 1rem;
+  }
+
+  /* Custom scrollbar styles */
+  ::-webkit-scrollbar {
+    width: 12px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #f4f6f8;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #8e2de2, #4a00e0);
+    border-radius: 6px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, #4a00e0, #8e2de2);
   }
 `;
 

@@ -49,7 +49,13 @@ const TaskList: React.FC<TaskListProps> = ({
             </Typography>
             <Box sx={{ position: "absolute", top: 8, right: 8 }}>
               <IconButton
-                color="primary"
+                size="small"
+                sx={{
+                  mr: 0.5,
+                  background:
+                    "linear-gradient(45deg, #8e2de2 30%, #4a00e0 90%)",
+                  color: "#fff",
+                }}
                 onClick={() =>
                   onStatusChange(
                     task.id!,
@@ -65,14 +71,27 @@ const TaskList: React.FC<TaskListProps> = ({
                 )}
               </IconButton>
               <IconButton
-                color="primary"
+                size="small"
+                sx={{
+                  mr: 0.5,
+                  ml: 0.5,
+                  background:
+                    "linear-gradient(45deg, #8e2de2 30%, #4a00e0 90%)",
+                  color: "#fff",
+                }}
                 onClick={() => onEdit(task)}
                 disabled={isEditing}
               >
                 <EditIcon />
               </IconButton>
               <IconButton
-                color="secondary"
+                size="small"
+                sx={{
+                  ml: 0.5,
+                  background:
+                    "linear-gradient(45deg, #8e2de2 30%, #4a00e0 90%)",
+                  color: "#fff",
+                }}
                 onClick={() => onDelete(task.id!)}
                 disabled={isEditing}
               >

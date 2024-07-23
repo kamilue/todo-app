@@ -3,7 +3,7 @@ import { createTheme } from '@mui/material/styles';
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#1976d2',
+      main: '#8e2de2',
     },
     secondary: {
       main: '#dc004e',
@@ -22,6 +22,15 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           borderRadius: '20px',
+          background: 'linear-gradient(45deg, #8e2de2 30%, #4a00e0 90%)',
+          color: '#fff',
+        },
+      },
+    },
+    MuiIconButton: {
+      styleOverrides: {
+        root: {
+          color: 'linear-gradient(45deg, #8e2de2 30%, #4a00e0 90%)',
         },
       },
     },
