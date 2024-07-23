@@ -1,7 +1,7 @@
 export interface Task {
   id?: number;
   title: string;
-  assigneeId?: number;
+  assigneeId: string;
   estimate: number;
   status: 'TODO' | 'DONE';
 }

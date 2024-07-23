@@ -45,7 +45,7 @@ const TaskForm: React.FC<TaskFormProps> = ({
     onSubmit: (values) => {
       onTaskSubmit({
         title: values.title,
-        assigneeId: values.assigneeId ? parseInt(values.assigneeId) : undefined,
+        assigneeId: values.assigneeId,
         estimate: Number(values.estimate),
         status: values.status as "TODO" | "DONE",
       });
@@ -57,7 +57,7 @@ const TaskForm: React.FC<TaskFormProps> = ({
     if (taskToEdit) {
       formik.setValues({
         title: taskToEdit.title,
-        assigneeId: taskToEdit.assigneeId?.toString() || "",
+        assigneeId: taskToEdit.assigneeId,
         estimate: taskToEdit.estimate.toString(),
         status: taskToEdit.status,
       });

@@ -24,7 +24,7 @@ import theme from "./styles/theme";
 const App: React.FC = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [assignees, setAssignees] = useState<Assignee[]>([]);
-  const [apiKey, setApiKey] = useState("your-api-key");
+  const [apiKey, setApiKey] = useState("test");
   const [taskToEdit, setTaskToEdit] = useState<Task | null>(null);
   const [completionDate, setCompletionDate] = useState<Date | null>(null);
   const [formOpen, setFormOpen] = useState<boolean>(false);

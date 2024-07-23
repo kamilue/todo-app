@@ -30,8 +30,8 @@ const TaskList: React.FC<TaskListProps> = ({
   onEdit,
   isEditing,
 }) => {
-  const getAssigneeName = (assigneeId: number | undefined) => {
-    const assignee = assignees.find((a) => parseInt(a.id) === assigneeId);
+  const getAssigneeName = (assigneeId: string) => {
+    const assignee = assignees.find((a) => a.id === assigneeId);
     return assignee ? assignee.name : "Unassigned";
   };
 
