@@ -1,8 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 using TodoAppBackend.Services;
-using System;
-using System.Net.Http;
-using System.Threading.Tasks;
 
 namespace TodoAppBackend.Controllers
 {

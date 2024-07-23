@@ -15,7 +15,7 @@ namespace TodoAppBackend.Controllers
         }
 
         [HttpGet("{assigneeId}/{date}")]
-        public async Task<IActionResult> GetTimesheet(int assigneeId, DateTime date, [FromQuery] string apiKey)
+        public async Task<IActionResult> GetTimesheet(string assigneeId, DateTime date, [FromQuery] string apiKey)
         {
             try
             {

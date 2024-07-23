@@ -32,10 +32,26 @@ namespace TodoAppBackend.Controllers
         }
 
         [HttpPost]
-        public ActionResult<Task> CreateTask(Task task)
+        public async Task<ActionResult<Task>> CreateTask(Task task)
         {
             try
             {
+                if (string.IsNullOrEmpty(task.AssigneeId))
+                {
+                    task.Id = tasks.Count > 0 ? tasks.Max(t => t.Id) + 1 : 1;
+                    tasks.Add(task);
+                    return CreatedAtAction(nameof(GetTasks), new { id = task.Id }, task);
+                }
+
+                var timesheets = await _timesheetService.GetTimesheetAsync(task.AssigneeId, DateTime.Now, "test");
+                var availableHours = _taskCompletionEstimator.CalculateAvailableHours(timesheets.ToList());
+
+                var assignedHours = tasks.Where(t => t.AssigneeId == task.AssigneeId && t.Status == "TODO").Sum(t => t.Estimate);
+                if (assignedHours + task.Estimate > availableHours)
+                {
+                    return BadRequest(new { Message = "Assignee does not have enough available hours for this task." });
+                }
+
                 task.Id = tasks.Count > 0 ? tasks.Max(t => t.Id) + 1 : 1;
                 tasks.Add(task);
                 return CreatedAtAction(nameof(GetTasks), new { id = task.Id }, task);
@@ -47,7 +63,7 @@ namespace TodoAppBackend.Controllers
         }
 
         [HttpPatch("{id}")]
-        public ActionResult<Task> UpdateTask(int id, [FromBody] Task updatedTask)
+        public async Task<ActionResult<Task>> UpdateTask(int id, [FromBody] Task updatedTask)
         {
             try
             {
@@ -55,6 +71,25 @@ namespace TodoAppBackend.Controllers
                 if (task == null)
                 {
                     return NotFound(new { Message = "Task not found." });
+                }
+
+                if (string.IsNullOrEmpty(updatedTask.AssigneeId))
+                {
+                    task.Title = updatedTask.Title;
+                    task.AssigneeId = updatedTask.AssigneeId;
+                    task.Estimate = updatedTask.Estimate;
+                    task.Status = updatedTask.Status;
+
+                    return Ok(task);
+                }
+
+                var timesheets = await _timesheetService.GetTimesheetAsync(updatedTask.AssigneeId, DateTime.Now, "test");
+                var availableHours = _taskCompletionEstimator.CalculateAvailableHours(timesheets.ToList());
+
+                var assignedHours = tasks.Where(t => t.AssigneeId == updatedTask.AssigneeId && t.Status == "TODO").Sum(t => t.Estimate);
+                if (assignedHours + updatedTask.Estimate > availableHours)
+                {
+                    return BadRequest(new { Message = "Assignee does not have enough available hours for this task." });
                 }
 
                 task.Title = updatedTask.Title;

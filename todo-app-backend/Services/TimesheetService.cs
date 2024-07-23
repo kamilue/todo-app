@@ -12,15 +12,26 @@ namespace TodoAppBackend.Services
             _httpClient = httpClient;
         }
 
-        public async Task<IEnumerable<Timesheet>> GetTimesheetAsync(int assigneeId, DateTime date, string apiKey)
+        public async Task<IEnumerable<Timesheet>> GetTimesheetAsync(string assigneeId, DateTime date, string apiKey)
         {
             try
             {
-                var response = await _httpClient.GetAsync($"http://remote-assignee-service-stretto.us-east-2.elasticbeanstalk.com/api/assignee/{assigneeId}/timesheet/{date:yyyy-MM}?apiKey={apiKey}");
+                var url = $"http://remote-assignee-service-stretto.us-east-2.elasticbeanstalk.com/api/assignee/{assigneeId}/timesheet/{date:yyyy-MM}?apiKey={apiKey}";
+                var response = await _httpClient.GetAsync(url);
                 response.EnsureSuccessStatusCode();
 
                 var content = await response.Content.ReadAsStringAsync();
-                return JsonConvert.DeserializeObject<IEnumerable<Timesheet>>(content);
+                var timesheets = JsonConvert.DeserializeObject<List<Timesheet>>(content);
+
+                if (timesheets != null)
+                {
+                    foreach (var timesheet in timesheets)
+                    {
+                        timesheet.AssigneeId = assigneeId;
+                    }
+                }
+
+                return timesheets;
             }
             catch (HttpRequestException ex)
             {

@@ -1,19 +1,38 @@
 using TodoAppBackend.Models;
-using Task = TodoAppBackend.Models.Task;
 
 namespace TodoAppBackend.Services
 {
     public class TaskCompletionEstimator
     {
-        public DateTime EstimateCompletionDate(List<Task> tasks, List<Timesheet> timesheets)
+        public int CalculateAvailableHours(List<Timesheet> timesheets)
         {
-            var totalEstimateHours = tasks.Where(t => t.Status == "TODO").Sum(t => t.Estimate);
-            var availableHours = timesheets.SelectMany(t => t.AvailableHours).Sum(tr => (tr.End - tr.Start).TotalHours);
-
-            if (availableHours == 0) return DateTime.MaxValue;
-
-            var daysRequired = Math.Ceiling(totalEstimateHours / availableHours);
-            return DateTime.Today.AddDays(daysRequired);
+            int totalHours = 0;
+            try
+            {
+                foreach (var timesheet in timesheets)
+                {
+                    if (!string.IsNullOrEmpty(timesheet.Hours))
+                    {
+                        var ranges = timesheet.Hours.Split(',');
+                        foreach (var range in ranges)
+                        {
+                            var hours = range.Split('-');
+                            if (hours.Length == 2)
+                            {
+                                TimeSpan startTime = TimeSpan.Parse(hours[0]);
+                                TimeSpan endTime = TimeSpan.Parse(hours[1]);
+                                totalHours += (int)(endTime - startTime).TotalHours;
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error calculating available hours: {ex.Message}");
+                throw new InvalidOperationException("Failed to calculate available hours.", ex);
+            }
+            return totalHours;
         }
     }
 }
