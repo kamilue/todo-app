@@ -44,7 +44,7 @@ namespace TodoAppBackend.Controllers
                 }
 
                 var timesheets = await _timesheetService.GetTimesheetAsync(task.AssigneeId, DateTime.Now, "test");
-                var availableHours = _taskCompletionEstimator.CalculateAvailableHours(timesheets.ToList());
+                var availableHours = _taskCompletionEstimator.CalculateAvailableHoursFromToday(timesheets.ToList());
 
                 var assignedHours = tasks.Where(t => t.AssigneeId == task.AssigneeId && t.Status == "TODO").Sum(t => t.Estimate);
                 if (assignedHours + task.Estimate > availableHours)
@@ -84,7 +84,7 @@ namespace TodoAppBackend.Controllers
                 }
 
                 var timesheets = await _timesheetService.GetTimesheetAsync(updatedTask.AssigneeId, DateTime.Now, "test");
-                var availableHours = _taskCompletionEstimator.CalculateAvailableHours(timesheets.ToList());
+                var availableHours = _taskCompletionEstimator.CalculateAvailableHoursFromToday(timesheets.ToList());
 
                 var assignedHours = tasks.Where(t => t.AssigneeId == updatedTask.AssigneeId && t.Status == "TODO").Sum(t => t.Estimate);
                 if (assignedHours + updatedTask.Estimate > availableHours)
