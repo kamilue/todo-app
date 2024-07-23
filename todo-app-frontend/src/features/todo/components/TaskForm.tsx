@@ -67,7 +67,7 @@ const TaskForm: React.FC<TaskFormProps> = ({
   }, [taskToEdit]);
 
   return (
-    <Paper elevation={3} sx={{ padding: 3, borderRadius: "15px" }}>
+    <Paper elevation={3} sx={{ padding: 3, borderRadius: "15px", mt: 3 }}>
       <Box component="form" onSubmit={formik.handleSubmit} sx={{ mt: 3 }}>
         <TextField
           label="Task Title"
