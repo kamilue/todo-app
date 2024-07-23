@@ -17,8 +17,19 @@ namespace TodoAppBackend.Controllers
         [HttpGet("{assigneeId}/{date}")]
         public async Task<IActionResult> GetTimesheet(int assigneeId, DateTime date, [FromQuery] string apiKey)
         {
-            var timesheets = await _timesheetService.GetTimesheetAsync(assigneeId, date, apiKey);
-            return Ok(timesheets);
+            try
+            {
+                var timesheets = await _timesheetService.GetTimesheetAsync(assigneeId, date, apiKey);
+                return Ok(timesheets);
+            }
+            catch (HttpRequestException ex)
+            {
+                return StatusCode(503, new { Message = "Service unavailable. Please try again later.", Details = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Message = "An unexpected error occurred.", Details = ex.Message });
+            }
         }
     }
 }

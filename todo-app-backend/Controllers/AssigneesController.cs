@@ -1,5 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using TodoAppBackend.Services;
+using System;
+using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace TodoAppBackend.Controllers
 {
@@ -17,8 +20,19 @@ namespace TodoAppBackend.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAssignees([FromQuery] string apiKey)
         {
-            var assignees = await _assigneeService.GetAssigneesAsync(apiKey);
-            return Ok(assignees);
+            try
+            {
+                var assignees = await _assigneeService.GetAssigneesAsync(apiKey);
+                return Ok(assignees);
+            }
+            catch (HttpRequestException ex)
+            {
+                return StatusCode(503, new { Message = "Service unavailable. Please try again later.", Details = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Message = "An unexpected error occurred.", Details = ex.Message });
+            }
         }
     }
 }
