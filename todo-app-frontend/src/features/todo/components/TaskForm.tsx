@@ -64,6 +64,7 @@ const TaskForm: React.FC<TaskFormProps> = ({
     } else {
       formik.resetForm();
     }
+    //eslint-disable-next-line
   }, [taskToEdit]);
 
   return (
