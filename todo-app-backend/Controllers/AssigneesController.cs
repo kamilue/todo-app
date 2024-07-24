@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using TodoAppBackend.Services;
+using TodoAppBackend.Interfaces;
 
 namespace TodoAppBackend.Controllers
 {
@@ -7,9 +7,9 @@ namespace TodoAppBackend.Controllers
     [Route("api/[controller]")]
     public class AssigneesController : ControllerBase
     {
-        private readonly AssigneeService _assigneeService;
+        private readonly IAssigneeService _assigneeService;
 
-        public AssigneesController(AssigneeService assigneeService)
+        public AssigneesController(IAssigneeService assigneeService)
         {
             _assigneeService = assigneeService;
         }

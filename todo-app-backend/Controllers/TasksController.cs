@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using TodoAppBackend.Services;
+using TodoAppBackend.Interfaces;
 using Task = TodoAppBackend.Models.Task;
 
 namespace TodoAppBackend.Controllers
@@ -8,18 +8,18 @@ namespace TodoAppBackend.Controllers
     [Route("api/[controller]")]
     public class TasksController : ControllerBase
     {
-        private static List<Task> tasks = new List<Task>();
-        private readonly TimesheetService _timesheetService;
-        private readonly TaskCompletionEstimator _taskCompletionEstimator;
+        internal static List<Task> tasks = new List<Task>();
+        private readonly ITimesheetService _timesheetService;
+        private readonly ITaskCompletionEstimator _taskCompletionEstimator;
 
-        public TasksController(TimesheetService timesheetService, TaskCompletionEstimator taskCompletionEstimator)
+        public TasksController(ITimesheetService timesheetService, ITaskCompletionEstimator taskCompletionEstimator)
         {
             _timesheetService = timesheetService;
             _taskCompletionEstimator = taskCompletionEstimator;
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<Task>> GetTasks()
+        public IActionResult GetTasks()
         {
             try
             {
@@ -32,7 +32,7 @@ namespace TodoAppBackend.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Task>> CreateTask(Task task)
+        public async Task<IActionResult> CreateTask(Task task)
         {
             try
             {
@@ -63,7 +63,7 @@ namespace TodoAppBackend.Controllers
         }
 
         [HttpPatch("{id}")]
-        public async Task<ActionResult<Task>> UpdateTask(int id, [FromBody] Task updatedTask)
+        public async Task<IActionResult> UpdateTask(int id, [FromBody] Task updatedTask)
         {
             try
             {
@@ -106,7 +106,7 @@ namespace TodoAppBackend.Controllers
         }
 
         [HttpDelete("{id}")]
-        public ActionResult DeleteTask(int id)
+        public IActionResult DeleteTask(int id)
         {
             try
             {

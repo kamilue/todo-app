@@ -1,8 +1,9 @@
+using TodoAppBackend.Interfaces;
 using TodoAppBackend.Models;
 
 namespace TodoAppBackend.Services
 {
-    public class TaskCompletionEstimator
+    public class TaskCompletionEstimator : ITaskCompletionEstimator
     {
         public int CalculateAvailableHours(List<Timesheet> timesheets)
         {

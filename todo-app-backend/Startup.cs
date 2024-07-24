@@ -1,16 +1,29 @@
-using TodoAppBackend.Services;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using TodoAppBackend.Interfaces;
+using TodoAppBackend.Services;
 
 namespace TodoAppBackend
 {
     public class Startup
     {
+        public Startup(IConfiguration configuration)
+        {
+            Configuration = configuration;
+        }
+
+        public IConfiguration Configuration { get; }
+
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-            services.AddHttpClient<AssigneeService>();
-            services.AddHttpClient<TimesheetService>();
-            services.AddScoped<TaskCompletionEstimator>();
+            services.AddHttpClient<IAssigneeService, AssigneeService>();
+            services.AddHttpClient<ITimesheetService, TimesheetService>();
+            services.AddScoped<ITaskCompletionEstimator, TaskCompletionEstimator>();
 
             services.AddCors(options =>
             {

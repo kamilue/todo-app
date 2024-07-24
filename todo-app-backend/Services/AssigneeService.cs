@@ -1,9 +1,10 @@
 using Newtonsoft.Json;
+using TodoAppBackend.Interfaces;
 using TodoAppBackend.Models;
 
 namespace TodoAppBackend.Services
 {
-    public class AssigneeService
+    public class AssigneeService : IAssigneeService
     {
         private readonly HttpClient _httpClient;
 

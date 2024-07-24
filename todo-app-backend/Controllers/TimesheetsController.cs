@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using TodoAppBackend.Services;
+using TodoAppBackend.Interfaces;
 
 namespace TodoAppBackend.Controllers
 {
@@ -7,9 +7,9 @@ namespace TodoAppBackend.Controllers
     [Route("api/[controller]")]
     public class TimesheetsController : ControllerBase
     {
-        private readonly TimesheetService _timesheetService;
+        private readonly ITimesheetService _timesheetService;
 
-        public TimesheetsController(TimesheetService timesheetService)
+        public TimesheetsController(ITimesheetService timesheetService)
         {
             _timesheetService = timesheetService;
         }

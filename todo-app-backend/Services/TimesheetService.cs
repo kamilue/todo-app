@@ -1,9 +1,10 @@
 using Newtonsoft.Json;
+using TodoAppBackend.Interfaces;
 using TodoAppBackend.Models;
 
 namespace TodoAppBackend.Services
 {
-    public class TimesheetService
+    public class TimesheetService : ITimesheetService
     {
         private readonly HttpClient _httpClient;
 
