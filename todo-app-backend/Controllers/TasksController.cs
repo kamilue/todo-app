@@ -104,7 +104,6 @@ namespace TodoAppBackend.Controllers
                 return StatusCode(500, new { Message = "An unexpected error occurred.", Details = ex.Message });
             }
         }
-
         [HttpDelete("{id}")]
         public IActionResult DeleteTask(int id)
         {
