@@ -85,6 +85,7 @@ const TaskList: React.FC<TaskListProps> = ({
                 <EditIcon />
               </IconButton>
               <IconButton
+                id="delete"
                 size="small"
                 sx={{
                   ml: 0.5,

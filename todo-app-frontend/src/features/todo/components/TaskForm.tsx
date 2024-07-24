@@ -89,6 +89,7 @@ const TaskForm: React.FC<TaskFormProps> = ({
           <Select
             labelId="assignee-label"
             name="assigneeId"
+            id="assigneeId"
             value={formik.values.assigneeId}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
@@ -123,6 +124,7 @@ const TaskForm: React.FC<TaskFormProps> = ({
         >
           <InputLabel id="status-label">Status</InputLabel>
           <Select
+            id="status"
             labelId="status-label"
             name="status"
             value={formik.values.status}
